@@ -32,25 +32,26 @@ const SignUpPage = () => {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to crate account");
-
+        if (!res.ok) throw new Error(data.error || "Failed to create account");
         console.log(data);
         return data;
       } catch (error) {
         console.error(error);
         throw error;
-        // toast.error(error.message);
       }
     },
     onSuccess: () => {
       toast.success("Account created successfully");
 
+      {
+        /* validate queries */
+      }
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
   });
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // page won't reload
     mutate(formData);
   };
 
