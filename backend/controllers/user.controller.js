@@ -1,5 +1,5 @@
-import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
+import { v2 as cloudinary } from "cloudinary";
 
 // models
 import Notification from "../models/notification.model.js";
@@ -10,8 +10,7 @@ export const getUserProfile = async (req, res) => {
 
   try {
     const user = await User.findOne({ username }).select("-password");
-
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(user);
   } catch (error) {
@@ -40,14 +39,12 @@ export const followUnfollowUser = async (req, res) => {
     if (isFollowing) {
       // Unfollow the user
       await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
-
       await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
 
       res.status(200).json({ message: "User unfollowed successfully" });
     } else {
       // Follow the user
       await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
-
       await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
       // Send notification to the user
       const newNotification = new Notification({
@@ -58,7 +55,6 @@ export const followUnfollowUser = async (req, res) => {
 
       await newNotification.save();
 
-      // todo return the id of the user as a response
       res.status(200).json({ message: "User followed successfully" });
     }
   } catch (error) {
@@ -82,12 +78,14 @@ export const getSuggestedUsers = async (req, res) => {
       { $sample: { size: 10 } },
     ]);
 
+    // 1,2,3,4,5,6,
     const filteredUsers = users.filter(
       (user) => !usersFollowedByMe.following.includes(user._id)
     );
     const suggestedUsers = filteredUsers.slice(0, 4);
 
     suggestedUsers.forEach((user) => (user.password = null));
+
     res.status(200).json(suggestedUsers);
   } catch (error) {
     console.log("Error in getSuggestedUsers: ", error.message);
@@ -124,15 +122,18 @@ export const updateUser = async (req, res) => {
           .status(400)
           .json({ error: "Password must be at least 6 characters long" });
       }
+
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(newPassword, salt);
     }
+
     if (profileImg) {
       if (user.profileImg) {
         await cloudinary.uploader.destroy(
           user.profileImg.split("/").pop().split(".")[0]
         );
       }
+
       const uploadedResponse = await cloudinary.uploader.upload(profileImg);
       profileImg = uploadedResponse.secure_url;
     }
@@ -143,6 +144,7 @@ export const updateUser = async (req, res) => {
           user.coverImg.split("/").pop().split(".")[0]
         );
       }
+
       const uploadedResponse = await cloudinary.uploader.upload(coverImg);
       coverImg = uploadedResponse.secure_url;
     }

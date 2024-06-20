@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 
 const useUpdateUserProfile = () => {
   const queryClient = useQueryClient();
+
   const { mutateAsync: updateProfile, isPending: isUpdatingProfile } =
     useMutation({
       mutationFn: async (formData) => {
@@ -16,7 +17,7 @@ const useUpdateUserProfile = () => {
           });
           const data = await res.json();
           if (!res.ok) {
-            throw new Error(data.error || "Something went wrong!");
+            throw new Error(data.error || "Something went wrong");
           }
           return data;
         } catch (error) {
@@ -31,7 +32,7 @@ const useUpdateUserProfile = () => {
         ]);
       },
       onError: (error) => {
-        toastt.error(error.message);
+        toast.error(error.message);
       },
     });
 

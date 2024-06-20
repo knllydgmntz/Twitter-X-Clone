@@ -15,7 +15,6 @@ import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date";
 
 import useFollow from "../../hooks/useFollow";
-
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
@@ -29,7 +28,6 @@ const ProfilePage = () => {
   const { username } = useParams();
 
   const { follow, isPending } = useFollow();
-
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
   const {
@@ -189,7 +187,7 @@ const ProfilePage = () => {
                       <>
                         <FaLink className="w-3 h-3 text-slate-500" />
                         <a
-                          href="https://facebook.com/knllydgmntz"
+                          href="facebook.com/knllydgmntz"
                           target="_blank"
                           rel="noreferrer"
                           className="text-sm text-blue-500 hover:underline"
@@ -250,5 +248,4 @@ const ProfilePage = () => {
     </>
   );
 };
-
 export default ProfilePage;
